@@ -13,56 +13,60 @@ public class Postfix <T> {
     public LLstack <T> stack;
     public File input;
     public File output;
-    public Tok token;
 
     // constructor
     public Postfix(){
-
+        
     }
 
-    // output needs to be specified as file (maybe use StringTokenizer)
-    public voids readFile(){
-
-        //creates a buffer reader input stream  
-        BufferedReader br=new BufferedReader(new FileReader(file));  
-        int r=0;  
-        while((r=br.read())!=-1){  
-            System.out.print((char)r);  
-        }  
-//         catch(Exception e){  
-//         e.printStackTrace();  
-// }  
-}     
-
     // also needs to change to specified object name of returns 
-    public void infixToPostfix(Tok token){
-        // read token from readFile line of code.
+    public void infixToPostfix(String filename){
+        try{
+            FileInputStream fis=new FileInputStream(filename);       
+            Scanner sc =new Scanner(fis);
+            FileWriter writer = new FileWriter("output.txt");
 
-        // new empty stack
-        LLstack <String> transferStack = new LLstack<String>();
-        // new empty string for final postfix expression
-        String tempString = new String("");
+            // new empty stack
+            LLstack <String> transferStack = new LLstack<String>();
 
-        while (token! = ";") {
-            if (token == ")") {
-                right = transferStack.pop();
-                oper = transferStack.pop();
-                left = transferStack.pop();
-                push(left + right + oper);
-            }
-            else {
-                if (token != "("){
-                    transferStack.push(token);
+            //while there is another line to read  
+            while(sc.hasNextLine()){  
+                String thisline = sc.nextLine();
+
+                StringTokenizer st = new StringTokenizer(thisline);
+
+                while (st.hasMoreTokens()) {
+                    String token = st.nextToken();
+
+                    if (token == ";"){
+                        String thisOutput = transferStack.pop();
+
+                        // ADD TO AN OUTPUT FILE
+                        writer.write(thisOutput + "\n");
+
+                        // validate that the stack is empty 
+                        if (!transferStack.isEmpty()){
+                            System.out.println("ERROR: stack is not empty at the end of expression");
+                        }
+                    }
+                    else if (token == ")") {
+                        String right = transferStack.pop();
+                        String oper = transferStack.pop();
+                        String left = transferStack.pop();
+                        transferStack.push(left + " " + right + " " + oper + ";");
+                    }
+                    else  {
+                        if (token != "(") transferStack.push(token);
+                    }
                 }
-            // read next token
             }
+        // close the scanner object
+        sc.close();
+        writer.close();
         }
-        // top of stack is a postfix expression (not sure if this is exaclty)
-        // for (String i : transferStack){}
-        for (int i = 1; i <= transferStack.size(); i = i++){
-            tempString = tempString + transferStack[i].getData();
-        }
-        transferStack.push(tempString);
+        catch(IOException e)  {  
+            e.printStackTrace();  
+        }  
     }
 
 
