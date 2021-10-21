@@ -8,15 +8,12 @@ import java.io.*;
 import java.util.*;
 
 
-public class Postfix <T> {
+public class Postfix {
 
-    public LLstack <T> stack;
-    public File input;
-    public File output;
-
-    // constructor
+    public LLstack <String> stack; 
+    
     public Postfix(){
-        
+        this.stack = new LLstack<String>();
     }
 
     // takes input file and output to a postfix file  
@@ -26,7 +23,7 @@ public class Postfix <T> {
             Scanner sc =new Scanner(fis);
             FileWriter writer = new FileWriter("postfixOutput.txt");
 
-            // new empty stack
+            // new empty stack - MIGHT WANT TO CHANGE IT TO THE CLASS ATTRIBUTE 
             LLstack <String> transferStack = new LLstack<String>();
 
             //while there is another line to read  
@@ -61,7 +58,7 @@ public class Postfix <T> {
                     }
                 }
             }
-        // close the scanner object
+        // close the scanner and writer
         sc.close();
         writer.close();
         }
