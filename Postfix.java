@@ -20,9 +20,8 @@ public class Postfix <T> {
 
     }
 
-    // output needs to be specified as file 
-    public void readFile(String location){
-        File file=new File(location);
+    // output needs to be specified as file (maybe use StringTokenizer)
+    public voids readFile(){
 
         //creates a buffer reader input stream  
         BufferedReader br=new BufferedReader(new FileReader(file));  
