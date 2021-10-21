@@ -19,12 +19,12 @@ public class Postfix <T> {
         
     }
 
-    // also needs to change to specified object name of returns 
+    // takes input file and output to a postfix file  
     public void infixToPostfix(String filename){
         try{
             FileInputStream fis=new FileInputStream(filename);       
             Scanner sc =new Scanner(fis);
-            FileWriter writer = new FileWriter("output.txt");
+            FileWriter writer = new FileWriter("postfixOutput.txt");
 
             // new empty stack
             LLstack <String> transferStack = new LLstack<String>();
@@ -41,19 +41,20 @@ public class Postfix <T> {
                     if (token == ";"){
                         String thisOutput = transferStack.pop();
 
-                        // ADD TO AN OUTPUT FILE
+                        // write to output 
                         writer.write(thisOutput + "\n");
 
                         // validate that the stack is empty 
                         if (!transferStack.isEmpty()){
                             System.out.println("ERROR: stack is not empty at the end of expression");
+                            return;
                         }
                     }
                     else if (token == ")") {
                         String right = transferStack.pop();
                         String oper = transferStack.pop();
                         String left = transferStack.pop();
-                        transferStack.push(left + " " + right + " " + oper + ";");
+                        transferStack.push(left + " " + right + " " + oper + " ;");
                     }
                     else  {
                         if (token != "(") transferStack.push(token);
