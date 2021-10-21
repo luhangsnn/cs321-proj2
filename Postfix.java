@@ -19,7 +19,7 @@ public class Postfix <T> {
 
     }
 
-    // output needs to be specified as file 
+    // output needs to be specified as file (maybe use StringTokenizer)
     public voids readFile(){
 
     }
@@ -30,6 +30,8 @@ public class Postfix <T> {
 
         // new empty stack
         LLstack <String> transferStack = new LLstack<String>();
+        // new empty string for final postfix expression
+        String tempString = new String("");
 
         while (token! = ";") {
             if (token == ")") {
@@ -46,6 +48,10 @@ public class Postfix <T> {
             }
         }
         // top of stack is a postfix expression
+        for (int i = 1; i <= transferStack.size(); i = i++){
+            String tempString = tempString + transferStack[i];
+        }
+        transferStack.push(tempString)
     }
 
 
