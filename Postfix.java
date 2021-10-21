@@ -7,7 +7,7 @@ import java.io.File;
 
 public class Postfix <T> {
 
-    public S LLstack;
+    public LLstack <T> stack;
     public File input;
     public File output;
 
@@ -17,7 +17,7 @@ public class Postfix <T> {
     }
 
     // output needs to be specified as file 
-    public voids readFile(){
+    public void readFile(){
 
     }
 
