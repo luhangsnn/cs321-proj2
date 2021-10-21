@@ -4,7 +4,8 @@
 // October 20, 2021
 
 import LLstack;
-import java.io.File;
+import java.io.*;
+import java.util.*;
 
 
 public class Postfix <T> {
@@ -20,9 +21,19 @@ public class Postfix <T> {
     }
 
     // output needs to be specified as file 
-    public void readFile(){
+    public void readFile(String location){
+        File file=new File(location);
 
-    }
+        //creates a buffer reader input stream  
+        BufferedReader br=new BufferedReader(new FileReader(file));  
+        int r=0;  
+        while((r=br.read())!=-1){  
+            System.out.print((char)r);  
+        }  
+//         catch(Exception e){  
+//         e.printStackTrace();  
+// }  
+}     
 
     // also needs to change to specified object name of returns 
     public void infixToPostfix(Tok token){
@@ -30,6 +41,8 @@ public class Postfix <T> {
 
         // new empty stack
         LLstack <String> transferStack = new LLstack<String>();
+        // new empty string for final postfix expression
+        String tempString = new String("");
 
         while (token! = ";") {
             if (token == ")") {
@@ -45,7 +58,12 @@ public class Postfix <T> {
             // read next token
             }
         }
-        // top of stack is a postfix expression
+        // top of stack is a postfix expression (not sure if this is exaclty)
+        // for (String i : transferStack){}
+        for (int i = 1; i <= transferStack.size(); i = i++){
+            tempString = tempString + transferStack[i].getData();
+        }
+        transferStack.push(tempString);
     }
 
 
