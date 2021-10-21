@@ -47,11 +47,12 @@ public class Postfix <T> {
             // read next token
             }
         }
-        // top of stack is a postfix expression
+        // top of stack is a postfix expression (not sure if this is exaclty)
+        // for (String i : transferStack){}
         for (int i = 1; i <= transferStack.size(); i = i++){
-            String tempString = tempString + transferStack[i];
+            tempString = tempString + transferStack[i].getData();
         }
-        transferStack.push(tempString)
+        transferStack.push(tempString);
     }
 
 
