@@ -10,13 +10,13 @@ import java.util.*;
 
 public class Postfix {
 
-    public LLstack <String> stack; 
+    // public LLstack <String> stack; 
     
-    public Postfix(){
-        this.stack = new LLstack<String>();
-    }
+    // public Postfix(){
+    //     this.stack = new LLstack<String>();
+    // }
 
-    // takes input file and output to a postfix file  
+    // takes input infix file and output to a postfix file  
     public void infixToPostfix(String filename){
         try{
             FileInputStream fis=new FileInputStream(filename);       
@@ -51,7 +51,7 @@ public class Postfix {
                         String right = transferStack.pop();
                         String oper = transferStack.pop();
                         String left = transferStack.pop();
-                        transferStack.push(left + " " + right + " " + oper + " ;");
+                        transferStack.push(left + " " + right + " " + oper + " ;"); // ADDITION OF ; MIGHT BE WRONG HERE
                     }
                     else  {
                         if (token != "(") transferStack.push(token);
@@ -66,7 +66,5 @@ public class Postfix {
             e.printStackTrace();  
         }  
     }
-
-
 
 }
