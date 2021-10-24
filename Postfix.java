@@ -17,11 +17,13 @@ public class Postfix {
     // }
 
     // takes input infix file and output to a postfix file  
-    public void infixToPostfix(String filename){
+    public void infixToPostfix(String inputFilename, String outFilename, boolean verbal){
+        FileWriter writer;
         try{
-            FileInputStream fis=new FileInputStream(filename);       
+            FileInputStream fis=new FileInputStream(inputFilename);       
             Scanner sc =new Scanner(fis);
-            FileWriter writer = new FileWriter("postfixOutput.txt");
+
+            if (outFilename != null) writer = new FileWriter(outFilename); // initialize the filewriter if an output file name is given
 
             // new empty stack - MIGHT WANT TO CHANGE IT TO THE CLASS ATTRIBUTE 
             LLstack <String> transferStack = new LLstack<String>();
@@ -30,20 +32,23 @@ public class Postfix {
             while(sc.hasNextLine()){  
                 String thisline = sc.nextLine();
 
+                if (outFilename != null) writer.write("Infix Expression: " + thisline + "\n"); // write to output 
+                else System.out.println("Infix Expression: " + thisline);
+
                 StringTokenizer st = new StringTokenizer(thisline);
 
                 while (st.hasMoreTokens()) {
                     String token = st.nextToken();
 
                     if (token == ";"){
-                        String thisOutput = transferStack.pop();
+                        String thisOutput = transferStack.pop() + ";";
 
-                        // write to output 
-                        writer.write(thisOutput + "\n");
+                        if (outFilename != null) writer.write("Postfix Expression: " + thisOutput + "\n"); // write to output 
+                        else System.out.println("Postfix Expression: " + thisOutput);
 
                         // validate that the stack is empty 
                         if (!transferStack.isEmpty()){
-                            System.out.println("ERROR: stack is not empty at the end of expression");
+                            System.out.println("ERROR: stack is not empty at the end of an expression");
                             return;
                         }
                     }
@@ -51,7 +56,7 @@ public class Postfix {
                         String right = transferStack.pop();
                         String oper = transferStack.pop();
                         String left = transferStack.pop();
-                        transferStack.push(left + " " + right + " " + oper + " ;"); // ADDITION OF ; MIGHT BE WRONG HERE
+                        transferStack.push(left + " " + right + " " + oper);
                     }
                     else  {
                         if (token != "(") transferStack.push(token);
@@ -60,11 +65,10 @@ public class Postfix {
             }
         // close the scanner and writer
         sc.close();
-        writer.close();
+        if (outFilename != null) writer.close();
         }
         catch(IOException e)  {  
             e.printStackTrace();  
         }  
     }
-
 }

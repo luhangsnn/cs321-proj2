@@ -16,8 +16,8 @@ public class Assembler {
         this.memoryNo = 1;
     }
     
-    // evaluate a single link of postfix expression and convert to assembly
-    public void toAssembly (String postfix){
+    // evaluate a single line of postfix expression and convert to assembly
+    public void toAssembly (String postfix, String outFileName){
         LLstack<String> astack = new LLstack<String>();
         List <String> operators = Arrays.asList("+", "-", "*", "/");
 
@@ -32,32 +32,63 @@ public class Assembler {
             else{
                 String right = astack.pop();
                 String left = astack.pop();
-                astack.push(this.evaluate(left, t, right));
+                astack.push(this.evaluate(left, t, right, outFileName));
             }
         }
         // check -- top of stack has value 
     }
 
-    public String evaluate(String left, String token, String right){
-        String assemblyOutput = "";
-        assemblyOutput += "LD " + left + "\n";
-
-        if (token == "+") assemblyOutput += "AD ";
-        else if (token == "-") assemblyOutput += "SB ";
-        else if (token == "*") assemblyOutput += "ML ";
-        else if (token == "/") assemblyOutput += "DV ";
-
-        assemblyOutput += right + "\n";
+    public String evaluate(String left, String token, String right, String outFileName){
         String tmpn = "TMP" + Integer.toString(this.memoryNo);
-        assemblyOutput += "ST " + tmpn + "\n";
+        
+        // format the operation line
+        String secondLine = "\t\t\t\t";
 
+        if (token == "+") secondLine += "AD";
+        else if (token == "-") secondLine += "SB";
+        else if (token == "*") secondLine += "ML";
+        else if (token == "/") secondLine += "DV";
+    
+        secondLine += "\t\t\t\t\t\t" + right;
+
+        if (outFileName == null){ // print to terminal
+            System.out.println("\t\t\t\tLD" + "\t\t\t\t\t\t" + left);
+            System.out.println(secondLine);
+            System.out.println("\t\t\t\tST " + "\t\t\t\t\t" + tmpn);
+        }
+        else{ // write to output file
+            try{
+                FileWriter writer = new FileWriter(outFileName, true); // append exsiting file if the file exists
+                writer.write("\t\t\t\tLD" + "\t\t\t\t\t\t" + left + "\n");
+                writer.write(secondLine + "\n");
+                writer.write("\t\t\t\tST " + "\t\t\t\t\t" + tmpn + "\n");
+                writer.close();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         this.memoryNo ++;
-        // write out assemblyOutput, only push TMPn to the stack
-
         return tmpn;
     }
 
-    public static void main(){
+    // overloading the evaluate function when no output filename is given -> print to terminal
+    public String evaluate(String left, String token, String right){
+        return this.evaluate(left, token, right, null);
+    }
 
+    public static void main(String[] args){
+        if (args.length < 1){
+            System.out.println("Usage: <infix file name> [output filename]");
+            return;
+        }
+        String input = args[0];
+        String output = null;
+
+        if (args.length > 1) { // if an output file name is given
+            output = args[1];
+        }
+        Postfix postfixConverter = new Postfix ();
+        postfixConverter.infixToPostfix(input, output);
     }
 }
