@@ -32,12 +32,10 @@ public class Postfix {
                     String oper = transferStack.pop();
                     String left = transferStack.pop();
                     transferStack.push(left + " " + right + " " + oper);
-                    // System.out.println("popped and pushing:" + left + " " + right + " " + oper);
                 }
                 else  {
                     if (!token.equals("(")){
                         transferStack.push(token);
-                        // System.out.println("pushing" + token);
                     }
                 }
             }
