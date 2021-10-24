@@ -44,8 +44,8 @@ public class Postfix {
             return thisOutput;
         }
         
-        // command line interface to read in .txt files with multiple lines of infix 
-        // print or write the conversion to postfix 
+    // command line interface to read in .txt files with multiple lines of infix 
+    // print or write the conversion to postfix 
     public static void main (String args[]){
         Postfix postfixConversion = new Postfix();
 
@@ -62,10 +62,10 @@ public class Postfix {
 
         FileWriter writer;
         try{
-            FileInputStream fis=new FileInputStream(input);       
-            Scanner sc =new Scanner(fis);
+            FileInputStream fis = new FileInputStream(input);       
+            Scanner sc = new Scanner(fis);
             if (output != null) writer = new FileWriter(output); // initialize the filewriter if an output file name is given
-            else writer = new FileWriter("temp.txt");
+            else writer = null; // to avoid instance not intialized error below when using writer
             
             while(sc.hasNextLine()){  //while there is another line to read  
                 String thisline = sc.nextLine();

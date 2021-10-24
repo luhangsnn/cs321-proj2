@@ -5,7 +5,6 @@
 import java.io.*;
 import java.util.*;
 
-
 public class Assembler {
 
     private int memoryNo;
@@ -15,7 +14,7 @@ public class Assembler {
     }
     
     // evaluate a single line of postfix expression and convert to assembly
-    public void toAssembly (String postfix, String outFileName){
+    public void toAssembly (String postfix, FileWriter writer){
         LLstack<String> astack = new LLstack<String>();
         List <String> operators = Arrays.asList("+", "-", "*", "/");
 
@@ -23,56 +22,50 @@ public class Assembler {
 
         while (st.hasMoreTokens()){
             String t = st.nextToken();
-            if (t == ";") break;
+            if (t.equals(";")) break;
             if (!operators.contains(t)){
                 astack.push(t);
             }
             else{
                 String right = astack.pop();
                 String left = astack.pop();
-                astack.push(this.evaluate(left, t, right, outFileName));
+                astack.push(this.evaluate(left, t, right, writer));
             }
         }
-        // check -- top of stack has value 
     }
 
-    public String evaluate(String left, String token, String right, String outFileName){
+    // print/write the assembly code
+    // takes a FileWriter parameter that will be null in the main fuction if no output filename is given
+    public String evaluate(String left, String token, String right, FileWriter writer){
         String tmpn = "TMP" + Integer.toString(this.memoryNo);
         
         // format the operation line
-        String secondLine = "\t\t\t\t";
+        String secondLine = "    ";
 
-        if (token == "+") secondLine += "AD";
-        else if (token == "-") secondLine += "SB";
-        else if (token == "*") secondLine += "ML";
-        else if (token == "/") secondLine += "DV";
+        if (token.equals("+")) secondLine += "AD";
+        else if (token.equals("-")) secondLine += "SB";
+        else if (token.equals("*")) secondLine += "ML";
+        else if (token.equals("/")) secondLine += "DV";
     
-        secondLine += "\t\t\t\t\t\t" + right;
+        secondLine += "      " + right;
 
-        if (outFileName == null){ // print to terminal
-            System.out.println("\t\t\t\tLD" + "\t\t\t\t\t\t" + left);
+        if (writer == null){ // print to terminal
+            System.out.println("    LD" + "      " + left);
             System.out.println(secondLine);
-            System.out.println("\t\t\t\tST " + "\t\t\t\t\t" + tmpn);
+            System.out.println("    ST " + "     " + tmpn);
         }
         else{ // write to output file
             try{
-                FileWriter writer = new FileWriter(outFileName, true); // append exsiting file if the file exists
-                writer.write("\t\t\t\tLD" + "\t\t\t\t\t\t" + left + "\n");
+                writer.write("    LD" + "      " + left + "\n");
                 writer.write(secondLine + "\n");
-                writer.write("\t\t\t\tST " + "\t\t\t\t\t" + tmpn + "\n");
-                writer.close();
+                writer.write("    ST " + "     " + tmpn + "\n");
             }
             catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        this.memoryNo ++;
+        this.memoryNo++;
         return tmpn;
-    }
-
-    // overloading the evaluate function when no output filename is given -> print to terminal
-    public String evaluate(String left, String token, String right){
-        return this.evaluate(left, token, right, null);
     }
 
     public static void main(String[] args){
@@ -80,13 +73,43 @@ public class Assembler {
             System.out.println("Usage: <infix file name> [output filename]");
             return;
         }
-        String input = args[0];
+        String infixInput = args[0];
         String output = null;
 
         if (args.length > 1) { // if an output file name is given
             output = args[1];
         }
+
         Postfix postfixConverter = new Postfix ();
-        // postfixConverter.infixToPostfix(input, output);
+        Assembler assemblyConverter = new Assembler();
+        FileWriter writer;
+
+        try{
+            FileInputStream fis = new FileInputStream(infixInput);       
+            Scanner sc = new Scanner(fis);
+
+            if (output != null) writer = new FileWriter(output); // initialize the filewriter if an output file name is given
+            else writer = null; // to avoid instance not intialized error below when using writer
+
+            while (sc.hasNextLine()){
+                String infixLine = sc.nextLine();
+                String thisPostfix = postfixConverter.infixToPostfix(infixLine);
+
+                if (output == null) {
+                    System.out.println("Infix Expression: " + infixLine);
+                    System.out.println("Postfix Expression: " + thisPostfix);
+                }
+                else{
+                    writer.write("Infix Expression: " + infixLine + "\n");
+                    writer.write("Postfix Expression: " + thisPostfix + "\n");
+                }
+                assemblyConverter.toAssembly(thisPostfix, writer);
+            }
+            sc.close();
+            writer.close();
+        }
+        catch(IOException e)  {  
+            e.printStackTrace();  
+        }
     }
 }
