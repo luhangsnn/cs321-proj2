@@ -2,8 +2,6 @@
 // Assembler.java
 // Luhang Sun & Ryan Seaman
 
-import LLstack;
-import Postfix;
 import java.io.*;
 import java.util.*;
 
@@ -89,6 +87,6 @@ public class Assembler {
             output = args[1];
         }
         Postfix postfixConverter = new Postfix ();
-        postfixConverter.infixToPostfix(input, output);
+        // postfixConverter.infixToPostfix(input, output);
     }
 }

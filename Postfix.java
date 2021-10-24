@@ -3,70 +3,91 @@
 // Ryan Seaman and Luhang Sun
 // October 20, 2021
 
-import LLstack;
 import java.io.*;
 import java.util.*;
 
 
 public class Postfix {
 
-    // public LLstack <String> stack; 
-    
-    // public Postfix(){
-    //     this.stack = new LLstack<String>();
-    // }
+    // takes a single line of infix and convert to postfix - reading file functions will be in the main function
+    public String infixToPostfix(String thisline){
+            LLstack <String> transferStack = new LLstack<String>();          
+            StringTokenizer st = new StringTokenizer(thisline);
+            String thisOutput = "";
 
-    // takes input infix file and output to a postfix file  
-    public void infixToPostfix(String inputFilename, String outFilename, boolean verbal){
-        FileWriter writer;
-        try{
-            FileInputStream fis=new FileInputStream(inputFilename);       
-            Scanner sc =new Scanner(fis);
+            while (st.hasMoreTokens()) {
+                String token = st.nextToken();
 
-            if (outFilename != null) writer = new FileWriter(outFilename); // initialize the filewriter if an output file name is given
+                if (token.equals(";")){
+                    thisOutput = transferStack.pop() + " ;";
 
-            // new empty stack - MIGHT WANT TO CHANGE IT TO THE CLASS ATTRIBUTE 
-            LLstack <String> transferStack = new LLstack<String>();
-
-            //while there is another line to read  
-            while(sc.hasNextLine()){  
-                String thisline = sc.nextLine();
-
-                if (outFilename != null) writer.write("Infix Expression: " + thisline + "\n"); // write to output 
-                else System.out.println("Infix Expression: " + thisline);
-
-                StringTokenizer st = new StringTokenizer(thisline);
-
-                while (st.hasMoreTokens()) {
-                    String token = st.nextToken();
-
-                    if (token == ";"){
-                        String thisOutput = transferStack.pop() + ";";
-
-                        if (outFilename != null) writer.write("Postfix Expression: " + thisOutput + "\n"); // write to output 
-                        else System.out.println("Postfix Expression: " + thisOutput);
-
-                        // validate that the stack is empty 
-                        if (!transferStack.isEmpty()){
-                            System.out.println("ERROR: stack is not empty at the end of an expression");
-                            return;
-                        }
+                    // validate that the stack is empty 
+                    if (!transferStack.isEmpty()){
+                        System.out.println("ERROR: stack is not empty at the end of an expression");
+                        return null;
                     }
-                    else if (token == ")") {
-                        String right = transferStack.pop();
-                        String oper = transferStack.pop();
-                        String left = transferStack.pop();
-                        transferStack.push(left + " " + right + " " + oper);
-                    }
-                    else  {
-                        if (token != "(") transferStack.push(token);
+                }
+                else if (token.equals(")")) {
+                    String right = transferStack.pop();
+                    String oper = transferStack.pop();
+                    String left = transferStack.pop();
+                    transferStack.push(left + " " + right + " " + oper);
+                    // System.out.println("popped and pushing:" + left + " " + right + " " + oper);
+                }
+                else  {
+                    if (!token.equals("(")){
+                        transferStack.push(token);
+                        // System.out.println("pushing" + token);
                     }
                 }
             }
+            return thisOutput;
+        }
+        
+        // command line interface to read in .txt files with multiple lines of infix 
+        // print or write the conversion to postfix 
+    public static void main (String args[]){
+        Postfix postfixConversion = new Postfix();
+
+        if (args.length < 1){
+            System.out.println("Usage: <infix file name> [output filename]");
+            return;
+        }
+
+        String input = args[0];
+        String output = null;
+        if (args.length > 1) { // if an output file name is given
+            output = args[1];
+        }
+
+        FileWriter writer;
+        try{
+            FileInputStream fis=new FileInputStream(input);       
+            Scanner sc =new Scanner(fis);
+            if (output != null) writer = new FileWriter(output); // initialize the filewriter if an output file name is given
+            else writer = new FileWriter("temp.txt");
+            
+            while(sc.hasNextLine()){  //while there is another line to read  
+                String thisline = sc.nextLine();
+
+                // first print the infix expression (if no output filename is given)
+                // not writing infix expression to output file - will be done in Assembler.java
+                if (output == null) System.out.println("Infix Expression: " + thisline);
+                
+                // convert to postfix
+                String thisPostfix = postfixConversion.infixToPostfix(thisline);
+
+                // print/write the postfix expressions 
+                if (output != null) writer.write(thisPostfix + "\n"); 
+                else System.out.println("Postfix Expression: " + thisPostfix);
+
+            
+            }
         // close the scanner and writer
         sc.close();
-        if (outFilename != null) writer.close();
+        if (output != null) writer.close();
         }
+            
         catch(IOException e)  {  
             e.printStackTrace();  
         }  
